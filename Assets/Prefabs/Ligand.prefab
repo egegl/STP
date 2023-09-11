@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8552846494779881274}
   - component: {fileID: 8508144859811533429}
   - component: {fileID: 8166397635373140577}
-  - component: {fileID: 2601694793597297796}
+  - component: {fileID: 4557313239412150688}
   m_Layer: 6
   m_Name: Ligand
   m_TagString: Ligand
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 2159773488113773134}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.34666666, y: 0.34666666, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: -0}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 4ce9a1027220fe644a65e2f8ebcf0510, type: 3}
+  m_Sprite: {fileID: -121273756656506393, guid: 6819bd48afeb81943b0ee83239e162f5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -138,9 +138,9 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 0
---- !u!70 &2601694793597297796
+--- !u!70 &4557313239412150688
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,6 +148,7 @@ CapsuleCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2159773488113773134}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -171,7 +172,8 @@ CapsuleCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1.48, y: 2.0299997}
+  m_Size: {x: 0.52, y: 0.7}
   m_Direction: 0

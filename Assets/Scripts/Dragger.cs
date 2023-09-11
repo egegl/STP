@@ -1,40 +1,38 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Dragger : MonoBehaviour{
-	private Ligand _ligand;
-	private Vector3 _dragOffset;
-	private Camera _cam;
-	
-	public bool IsEnabled { get; set; }
+	private Ligand ligand;
+	private Vector3 dragOffset;
+	private Camera cam;
 
-	private void Start(){
-		_cam = Camera.main;
-		IsEnabled = true;
+	public bool IsEnabled;
+
+	private void Start() {
+		cam = Camera.main;
 		if (GetComponent<Ligand>() != null) {
-			_ligand = GetComponent<Ligand>();
+			ligand = GetComponent<Ligand>();
 		}
 	}
 
-	private void OnMouseDown(){
-		if(!IsEnabled) return;
-		_dragOffset = transform.position - GetMousePos();
+	private void OnMouseDown() {
+		if (!IsEnabled) return;
+		dragOffset = transform.position - GetMousePos();
 	}
 	
-	private void OnMouseDrag(){
+	private void OnMouseDrag() {
 		if(!IsEnabled) return;
-		transform.position = GetMousePos() + _dragOffset;
+		transform.position = GetMousePos() + dragOffset;
 	}
 
-	private void OnMouseUp(){	
+	private void OnMouseUp() {	
 		if(!IsEnabled) return;
-		if (_ligand != null){
-			_ligand.KickStart();
+		if (ligand != null){
+			ligand.KickStart();
 		}
 	}
 	
-	private Vector3 GetMousePos(){
-		Vector3 mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
+	private Vector3 GetMousePos() {
+		Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
 		mousePos.z = 0;
 		return mousePos;
 	}

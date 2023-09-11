@@ -40,12 +40,15 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Cytoplasm
-    uniqueID: 1649535543
-    locked: 0
   - name: BG
     uniqueID: 1521919975
     locked: 0
+  - name: Cytoplasm
+    uniqueID: 1649535543
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 789335559
     locked: 0
