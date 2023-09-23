@@ -1,37 +1,38 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PathwayManager : MonoBehaviour
 {
-	private bool moveDown = true;
-	private Vector3 camMovePos;
-	
-	[SerializeField] private Button camButton;
-	[SerializeField] private Transform membrane;
 	[SerializeField] private GameObject ligandPrefab;
 	[SerializeField] private Transform ligands;
-	[SerializeField] private Transform receptors;
+	[SerializeField] private int maxLigands;
 	[SerializeField] private TextMeshProUGUI pathwayText;
 	[SerializeField] private TextMeshProUGUI ligandText;
 	[SerializeField] private TextMeshProUGUI receptorText;
-	[SerializeField] private TextMeshProUGUI responseText;
+	[SerializeField] private TextMeshProUGUI activationText;
+	[SerializeField] private GraphWindow[] graphs;
 
-	// Singleton
+	[HideInInspector] public int LigandCount;
+	[HideInInspector] public int ActivationCount;
+	// singleton
 	public static PathwayManager Instance { get; private set; }
-	
-	private void Start(){
-		camMovePos = new Vector3(membrane.position.x, membrane.position.y + 2, -10);
-		Application.targetFrameRate = 60;
+	private void Awake() {
 		Instance = this;
+	}
 
+	private void Start(){
+		// spawn the initial ligand
+		SpawnLigand();
+		// set ligand text
 		SetLigandText(ligands.childCount);
-		SetReceptorText(receptors.childCount);
 	}
 
 	public void SpawnLigand(){
+		if (ligands.childCount == maxLigands) return;
 		SetLigandText(ligands.childCount + 1);
 		Instantiate(ligandPrefab, ligands);
 	}
@@ -42,37 +43,27 @@ public class PathwayManager : MonoBehaviour
 	}
 	
 	public void ResetPathway(){
+		// reset ligands
 		foreach (Transform ligand in ligands){ 
 			Destroy(ligand.gameObject);
 		}
-		foreach(Transform receptor in receptors){
-			receptor.GetComponent<Receptor>().ResetReceptor();
-		}
+		// reset counts
 		SetLigandText(0);
-	}
-
-	public void SetLigandText(int ligandCount){
-		ligandText.text = "#Ligands: " + ligandCount;
-	}
-	public void SetReceptorText(int receptorCount){
-		receptorText.text = "#Receptors: " + receptorCount;
-	}
-
-	public void ChangeCam(){
-		StartCoroutine(ButtonCooldown(camButton, .7f));
-		if (moveDown){
-			CamManager.Instance.Move(camMovePos, .6f);
-			CamManager.Instance.ChangeSize(19.5f);
+		SetActivationText(0);
+		// reset graphs
+		foreach (GraphWindow graph in graphs) {
+			graph.ResetGraph();
 		}
-		else{
-			CamManager.Instance.ResetCam();
-		}
-		moveDown = !moveDown;
+		// reset receptor
+		Receptor.Instance.ResetReceptor();
 	}
 
-	private IEnumerator ButtonCooldown(Button button, float time){
-		button.interactable = false;
-		yield return new WaitForSeconds(time);
-		button.interactable = true;
+	public void SetLigandText(int ligandCt){
+		LigandCount = ligandCt;
+		ligandText.text = LigandCount.ToString();
+	}
+	public void SetActivationText(int activationCt) {
+		ActivationCount = activationCt;
+		activationText.text = ActivationCount.ToString();
 	}
 }

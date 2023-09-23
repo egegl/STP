@@ -1,76 +1,77 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CamManager : MonoBehaviour{
-	private CinemachineVirtualCamera vCam;
-	private Vector3 startPos;
-	private float startSize;
-	private float maxSize = 19.5f;
-	private float minSize = 5f;
-	public Transform boundaries;
-	private float boundSize;
-	
+	private CinemachineBrain _vCamBrain;
+	private bool _zoomed;
+	private bool _zoomCD;
+	private float _minCamY;
+
+	[SerializeField] private Scrollbar _scrollbar;
+	[SerializeField] private Transform _zoomCam;
+	[SerializeField] private Transform _mainCam;
+	// singleton
 	public static CamManager Instance { get; private set; }
 	private void Awake(){
 		Instance = this;
 	}
 
 	private void Start(){
-		vCam = GetComponent<CinemachineVirtualCamera>();
-		//boundaries = transform.GetChild(0);
-		startPos = transform.position;
-		startSize = vCam.m_Lens.OrthographicSize;
+		_vCamBrain = GetComponent<CinemachineBrain>();
+		_vCamBrain.m_DefaultBlend.m_Time = 0.5f;
+		_zoomed = false;
+		_zoomCD = false;
+		_minCamY = -30;
 	}
 	
 	private void Update(){
-		if (Input.GetAxis("Mouse ScrollWheel") > 0f && vCam.m_Lens.OrthographicSize > minSize){
-			vCam.m_Lens.OrthographicSize -= .8f;
+		// move camera up and down
+		if (Input.GetAxis("Mouse ScrollWheel") > 0 || Input.GetKey(KeyCode.UpArrow)) {
+			if (_mainCam.position.y < 0) {
+				_mainCam.position += new Vector3(0, .3f, 0);
+				FixScroll(); 
+			}
 		}
-		else if (Input.GetAxis("Mouse ScrollWheel") < 0f && vCam.m_Lens.OrthographicSize < maxSize){
-			vCam.m_Lens.OrthographicSize += .8f;
+		if (Input.GetAxis("Mouse ScrollWheel") < 0 || Input.GetKey(KeyCode.DownArrow)) {
+			if (_mainCam.position.y > _minCamY) {
+				_mainCam.position -= new Vector3(0, .3f, 0);
+				FixScroll();
+			}
 		}
-		boundSize = vCam.m_Lens.OrthographicSize / 6;
-		boundaries.localScale = new Vector3(boundSize, boundSize, 1);
-		
-		if (Input.GetKey(KeyCode.W)){
-			transform.position += new Vector3(0, .2f, 0);
+		if (Input.GetMouseButtonDown(1) && !_zoomCD) {
+			if (!_zoomed) {
+				Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				mousePos.z = 0;
+				if (mousePos.x < 3.5) mousePos.x -= 1.5f;
+				else mousePos.x -= 2;
+				_zoomCam.position = mousePos;
+				_zoomCam.gameObject.SetActive(true);
+				_zoomed = true;
+			}
+			else {
+				_zoomCam.gameObject.SetActive(false);
+				_zoomed = false;
+			}
+			StartCoroutine(ZoomCooldown());
 		}
-		if (Input.GetKey(KeyCode.S)){
-			transform.position += new Vector3(0, -.2f, 0);
-		}
-		if (Input.GetKey(KeyCode.A)){
-			transform.position += new Vector3(-.2f, 0, 0);
-		}
-		if (Input.GetKey(KeyCode.D)){
-			transform.position += new Vector3(.2f, 0, 0);
-		}
-	}
-	
-	private IEnumerator Size(float to){
-		while (vCam.m_Lens.OrthographicSize < to - 1){
-				vCam.m_Lens.OrthographicSize += .5f;
-				yield return new WaitForSeconds(.01f);
-		}
-		while (vCam.m_Lens.OrthographicSize > to + 1){
-			vCam.m_Lens.OrthographicSize -= .5f;
-				yield return new WaitForSeconds(.01f);
-		}
-		vCam.m_Lens.OrthographicSize = to;
 	}
 
-	public void ChangeSize(float to) {
-		StartCoroutine(Size(to));
+	private IEnumerator ZoomCooldown() {
+		_zoomCD = true;
+		yield return new WaitForSecondsRealtime(0.5f);
+		_zoomCD = false;
 	}
-	
-	public void Move(Vector3 to, float time){
-		transform.LeanMove(to, time).setEaseInOutQuart();
+
+	private void FixScroll() {
+		_scrollbar.value = _mainCam.position.y / _minCamY;
 	}
-	
-	public void ResetCam(){
-		Move(startPos, .6f);
-		StartCoroutine(Size(startSize));
+
+	public void Scroll() {
+		float y = Mathf.Lerp(0, _minCamY, _scrollbar.value);
+		Vector3 to = new Vector3(_mainCam.position.x, y, _mainCam.position.z);
+		_mainCam.position = to;
 	}
 }
