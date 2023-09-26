@@ -65,7 +65,7 @@ public class InterfaceManager : MonoBehaviour
 	private IEnumerator WinSequence() {
 		levelPanel.gameObject.SetActive(true);
 		yield return new WaitForSecondsRealtime(0.2f);
-		winPanel.LeanScale(Vector3.one, 0.3f).setIgnoreTimeScale(true).setEaseOutBounce();
+		winPanel.LeanScale(Vector3.one, 1).setIgnoreTimeScale(true).setEaseOutBounce();
 	}
 
 	private IEnumerator LoseSequence() {

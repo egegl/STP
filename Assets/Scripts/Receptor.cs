@@ -103,7 +103,7 @@ public class Receptor : MonoBehaviour
 		// destroy cAMP if level 1
 		if (!_cascade) {
 			// win level 1 condition
-			if (CAMPCount == 10) {
+			if (CAMPCount == 5) {
 				InterfaceManager.Instance.WinLevel();
 			}
 			Destroy(camp, 2.5f);
